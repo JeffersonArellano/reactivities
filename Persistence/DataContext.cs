@@ -12,6 +12,5 @@ namespace Persistence
         }
         public DbSet<ActivityModel> Activities { get; set; }
 
-
     }
 }
