@@ -1,10 +1,9 @@
-﻿using Domain.Model;
+﻿using Application.Activities;
+using Domain.Model;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.EntityFrameworkCore;
-using Persistence;
 using System;
 using System.Collections.Generic;
-using System.Linq;
+using System.Threading;
 using System.Threading.Tasks;
 
 // For more information on enabling Web API for empty projects, visit https://go.microsoft.com/fwlink/?LinkID=397860
@@ -13,51 +12,69 @@ namespace API.Controllers
 {
     public class ActivitiesController : BaseApiController
     {
-        private readonly DataContext _context;
-
-        public ActivitiesController(DataContext context)
-        {
-            _context = context;
-        }
-
         /// <summary>
         /// Gets the activities.
         /// </summary>
+        /// <remarks>
+        /// Return the list of registered activities
+        /// </remarks>
         /// <returns></returns>
         [HttpGet]
         public async Task<ActionResult<List<ActivityModel>>> GetActivities()
         {
-            return await _context.Activities.ToListAsync();
+            return await Mediator.Send(new List.Query() );
         }
 
         /// <summary>
         /// Gets the activities.
         /// </summary>
+        /// <remarks>
+        /// return a single activity by Id
+        /// </remarks>
         /// <param name="id">The identifier.</param>
         /// <returns></returns>
         [HttpGet("{id}")]
-        public async Task<ActionResult<ActivityModel>> GetActivities(string id)
+        public async Task<ActionResult<ActivityModel>> GetActivities(Guid id)
         {
-            return await _context.Activities.FindAsync(id);
+            return await Mediator.Send(new Details.Query { Id = id });
         }
 
-
-        // POST api/<ActivitiesController>
+        /// <summary>
+        /// Posts the specified activity model.
+        /// </summary>
+        /// <remarks>
+        /// Creates a new Activity
+        /// </remarks>
+        /// <param name="activityModel">The activity model.</param>
+        /// <returns></returns>
         [HttpPost]
-        public void Post([FromBody] string value)
+        public async Task<IActionResult> Post([FromBody] ActivityModel activityModel)
         {
+            return Ok(await Mediator.Send(new Create.Command { ActivityModel = activityModel }));
         }
 
-        // PUT api/<ActivitiesController>/5
-        [HttpPut("{id}")]
-        public void Put(int id, [FromBody] string value)
+        /// <summary>
+        /// Puts the specified identifier.
+        /// </summary>
+        /// <param name="id">The identifier.</param>
+        /// <param name="activityModel">The activity model.</param>
+        /// <returns></returns>
+        [HttpPatch("{id}")]
+        public async Task<IActionResult> Put(Guid id, [FromBody] ActivityModel activityModel)
         {
+            activityModel.Id = id;
+            return Ok(await Mediator.Send(new Edit.Command { ActivityModel = activityModel }));
         }
 
-        // DELETE api/<ActivitiesController>/5
+        /// <summary>
+        /// Deletes the specified identifier.
+        /// </summary>
+        /// <param name="id">The identifier.</param>
+        /// <returns></returns>
         [HttpDelete("{id}")]
-        public void Delete(int id)
+        public async Task<IActionResult> Delete(Guid id)
         {
+            return Ok(await Mediator.Send(new Delete.Command { Id = id }));
         }
     }
 }
