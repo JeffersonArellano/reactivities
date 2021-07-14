@@ -20,9 +20,9 @@ namespace API.Controllers
         /// </remarks>
         /// <returns></returns>
         [HttpGet]
-        public async Task<ActionResult<List<ActivityModel>>> GetActivities()
+        public async Task<IActionResult> GetActivities()
         {
-            return await Mediator.Send(new List.Query() );
+            return HandleResult(await Mediator.Send(new List.Query()));
         }
 
         /// <summary>
@@ -34,9 +34,9 @@ namespace API.Controllers
         /// <param name="id">The identifier.</param>
         /// <returns></returns>
         [HttpGet("{id}")]
-        public async Task<ActionResult<ActivityModel>> GetActivities(Guid id)
+        public async Task<IActionResult> GetActivities(Guid id)
         {
-            return await Mediator.Send(new Details.Query { Id = id });
+            return HandleResult(await Mediator.Send(new Details.Query { Id = id }));
         }
 
         /// <summary>
@@ -50,7 +50,7 @@ namespace API.Controllers
         [HttpPost]
         public async Task<IActionResult> Post([FromBody] ActivityModel activityModel)
         {
-            return Ok(await Mediator.Send(new Create.Command { ActivityModel = activityModel }));
+            return HandleResult(await Mediator.Send(new Create.Command { ActivityModel = activityModel }));
         }
 
         /// <summary>
@@ -60,10 +60,10 @@ namespace API.Controllers
         /// <param name="activityModel">The activity model.</param>
         /// <returns></returns>
         [HttpPatch("{id}")]
-        public async Task<IActionResult> Put(Guid id, [FromBody] ActivityModel activityModel)
+        public async Task<IActionResult> Put(Guid id, ActivityModel activityModel)
         {
             activityModel.Id = id;
-            return Ok(await Mediator.Send(new Edit.Command { ActivityModel = activityModel }));
+            return HandleResult(await Mediator.Send(new Edit.Command { ActivityModel = activityModel }));
         }
 
         /// <summary>
@@ -74,7 +74,7 @@ namespace API.Controllers
         [HttpDelete("{id}")]
         public async Task<IActionResult> Delete(Guid id)
         {
-            return Ok(await Mediator.Send(new Delete.Command { Id = id }));
+            return HandleResult(await Mediator.Send(new Delete.Command { Id = id }));
         }
     }
 }

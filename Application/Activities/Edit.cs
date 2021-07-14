@@ -1,5 +1,7 @@
-﻿using AutoMapper;
+﻿using Application.Core;
+using AutoMapper;
 using Domain.Model;
+using FluentValidation;
 using MediatR;
 using Persistence;
 using System.Threading;
@@ -9,7 +11,11 @@ namespace Application.Activities
 {
     public class Edit
     {
-        public class Command : IRequest
+        /// <summary>
+        /// Command class
+        /// </summary>
+        /// <seealso cref="MediatR.IRequest" />
+        public class Command : IRequest<Result<Unit>>
         {
             /// <summary>
             /// Gets or sets the activity model.
@@ -20,7 +26,23 @@ namespace Application.Activities
             public ActivityModel ActivityModel { get; set; }
         }
 
-        public class Handler : IRequestHandler<Command>
+        /// <summary>
+        /// Command Validator
+        /// </summary>
+        /// <seealso cref="FluentValidation.AbstractValidator{Domain.Model.ActivityModel}" />
+        public class CommandValidator : AbstractValidator<Command>
+        {
+            public CommandValidator()
+            {
+                RuleFor(x => x.ActivityModel).SetValidator(new ActivityValidator());
+            }
+        }
+
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <seealso cref="MediatR.IRequestHandler{Application.Activities.Edit.Command}" />
+        public class Handler : IRequestHandler<Command, Result<Unit>>
         {
             private readonly DataContext _context;
             private readonly IMapper _mapper;
@@ -41,15 +63,20 @@ namespace Application.Activities
             /// <param name="request">The request.</param>
             /// <param name="cancellationToken">The cancellation token.</param>
             /// <returns></returns>
-            public async Task<Unit> Handle(Command request, CancellationToken cancellationToken)
+            public async Task<Result<Unit>> Handle(Command request, CancellationToken cancellationToken)
             {
                 var activity = await _context.Activities.FindAsync(request.ActivityModel.Id);
 
+                if (activity is null) return  null;
+
                 _mapper.Map(request.ActivityModel, activity);
 
-                await _context.SaveChangesAsync();
+                var result = await _context.SaveChangesAsync() > 0;
 
-                return Unit.Value;
+                if (!result)                
+                    return Result<Unit>.Failure("Activity to edit not found");               
+
+                return Result<Unit>.Success(Unit.Value);
             }
         }
     }

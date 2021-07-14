@@ -1,4 +1,5 @@
-﻿using Domain.Model;
+﻿using Application.Core;
+using Domain.Model;
 using MediatR;
 using Persistence;
 using System;
@@ -9,7 +10,7 @@ namespace Application.Activities
 {
     public class Details
     {
-        public class Query : IRequest<ActivityModel>
+        public class Query : IRequest<Result<ActivityModel>>
         {
             /// <summary>
             /// Gets or sets the identifier.
@@ -20,7 +21,7 @@ namespace Application.Activities
             public Guid Id { get; set; }
         }
 
-        public class Handler : IRequestHandler<Query, ActivityModel>
+        public class Handler : IRequestHandler<Query, Result<ActivityModel>>
         {
             private readonly DataContext _context;
 
@@ -41,9 +42,11 @@ namespace Application.Activities
             /// <returns>
             /// Response from the request
             /// </returns>
-            public async Task<ActivityModel> Handle(Query request, CancellationToken cancellationToken)
+            public async Task<Result<ActivityModel>> Handle(Query request, CancellationToken cancellationToken)
             {
-                return await _context.Activities.FindAsync(request.Id);
+                var activity= await _context.Activities.FindAsync(request.Id);
+
+                return Result<ActivityModel>.Success(activity);
             }
         }
 
