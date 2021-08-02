@@ -29,7 +29,7 @@ namespace API.Controllers
         /// <typeparam name="T"></typeparam>
         /// <param name="result">The result.</param>
         /// <returns></returns>
-        protected ActionResult HandleResult<T>(Result<T> result) 
+        protected ActionResult HandleResult<T>(Result<T> result)
         {
             if (result is null)
                 return NotFound();

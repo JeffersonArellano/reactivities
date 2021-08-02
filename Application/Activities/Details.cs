@@ -44,7 +44,7 @@ namespace Application.Activities
             /// </returns>
             public async Task<Result<ActivityModel>> Handle(Query request, CancellationToken cancellationToken)
             {
-                var activity= await _context.Activities.FindAsync(request.Id);
+                var activity = await _context.Activities.FindAsync(request.Id);
 
                 return Result<ActivityModel>.Success(activity);
             }

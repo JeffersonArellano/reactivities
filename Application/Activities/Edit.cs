@@ -67,14 +67,14 @@ namespace Application.Activities
             {
                 var activity = await _context.Activities.FindAsync(request.ActivityModel.Id);
 
-                if (activity is null) return  null;
+                if (activity is null) return null;
 
                 _mapper.Map(request.ActivityModel, activity);
 
                 var result = await _context.SaveChangesAsync() > 0;
 
-                if (!result)                
-                    return Result<Unit>.Failure("Activity to edit not found");               
+                if (!result)
+                    return Result<Unit>.Failure("Activity to edit not found");
 
                 return Result<Unit>.Success(Unit.Value);
             }
