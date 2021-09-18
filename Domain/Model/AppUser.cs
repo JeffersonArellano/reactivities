@@ -1,4 +1,5 @@
 ﻿using Microsoft.AspNetCore.Identity;
+using System.Collections.Generic;
 
 namespace Domain.Model
 {
@@ -13,5 +14,8 @@ namespace Domain.Model
         /// Gets or sets the bio.
         /// </summary>
         public string Bio { get; set; }
+
+        public virtual ICollection<ActivityAttendee> Activities { get; set; }
+
     }
 }

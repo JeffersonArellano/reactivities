@@ -1,7 +1,9 @@
 ﻿using Application.Core;
+using Application.Interfaces;
 using Domain.Model;
 using FluentValidation;
 using MediatR;
+using Microsoft.EntityFrameworkCore;
 using Persistence;
 using System.Threading;
 using System.Threading.Tasks;
@@ -18,32 +20,34 @@ namespace Application.Activities
             /// <value>
             /// The activity model.
             /// </value>
-            public ActivityModel ActivityModel { get; set; }
+            public Activity Activity { get; set; }
         }
 
         /// <summary>
         /// Command Validator
         /// </summary>
-        /// <seealso cref="FluentValidation.AbstractValidator{Domain.Model.ActivityModel}" />
+        /// <seealso cref="FluentValidation.AbstractValidator{Domain.Model.Activity}" />
         public class CommandValidator : AbstractValidator<Command>
         {
             public CommandValidator()
             {
-                RuleFor(x => x.ActivityModel).SetValidator(new ActivityValidator());
+                RuleFor(x => x.Activity).SetValidator(new ActivityValidator());
             }
         }
 
         public class Handler : IRequestHandler<Command, Result<Unit>>
         {
             private readonly DataContext _context;
+            private readonly IUserAccessor _userAccessor;
 
             /// <summary>
             /// Initializes a new instance of the <see cref="Handler"/> class.
             /// </summary>
             /// <param name="context">The context.</param>
-            public Handler(DataContext context)
+            public Handler(DataContext context, IUserAccessor userAccessor)
             {
                 _context = context;
+                _userAccessor = userAccessor;
             }
 
             /// <summary>
@@ -54,7 +58,19 @@ namespace Application.Activities
             /// <returns></returns>
             public async Task<Result<Unit>> Handle(Command request, CancellationToken cancellationToken)
             {
-                _context.Activities.Add(request.ActivityModel);
+                var user = await _context.Users.FirstOrDefaultAsync(x =>
+                    x.Id.Equals(_userAccessor.GetUserName()));
+
+                var attendee = new ActivityAttendee
+                {
+                    AppUser = user,
+                    Activity = request.Activity,
+                    IsHost = true
+                };
+
+                request.Activity.Attendees.Add(attendee);
+
+                _context.Activities.Add(request.Activity);
                 var result = await _context.SaveChangesAsync() > 0;
 
                 if (!result)

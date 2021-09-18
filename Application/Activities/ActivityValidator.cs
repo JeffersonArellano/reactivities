@@ -3,7 +3,7 @@ using FluentValidation;
 
 namespace Application.Activities
 {
-    public class ActivityValidator : AbstractValidator<ActivityModel>
+    public class ActivityValidator : AbstractValidator<Activity>
     {
         /// <summary>
         /// Initializes a new instance of the <see cref="ActivityValidator"/> class.

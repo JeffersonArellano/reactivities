@@ -47,9 +47,9 @@ namespace API.Controllers
         /// <param name="activityModel">The activity model.</param>
         /// <returns></returns>
         [HttpPost]
-        public async Task<IActionResult> Post([FromBody] ActivityModel activityModel)
+        public async Task<IActionResult> Post([FromBody] Activity activityModel)
         {
-            return HandleResult(await Mediator.Send(new Create.Command { ActivityModel = activityModel }));
+            return HandleResult(await Mediator.Send(new Create.Command { Activity = activityModel }));
         }
 
         /// <summary>
@@ -58,8 +58,9 @@ namespace API.Controllers
         /// <param name="id">The identifier.</param>
         /// <param name="activityModel">The activity model.</param>
         /// <returns></returns>
-        [HttpPatch("{id}")]
-        public async Task<IActionResult> Put(Guid id, ActivityModel activityModel)
+        [Authorize(Policy = "IsActivityHost")]
+        [HttpPut("{id}")]
+        public async Task<IActionResult> Put(Guid id, Activity activityModel)
         {
             activityModel.Id = id;
             return HandleResult(await Mediator.Send(new Edit.Command { ActivityModel = activityModel }));
@@ -70,10 +71,22 @@ namespace API.Controllers
         /// </summary>
         /// <param name="id">The identifier.</param>
         /// <returns></returns>
+        [Authorize(Policy = "IsActivityHost")]
         [HttpDelete("{id}")]
         public async Task<IActionResult> Delete(Guid id)
         {
             return HandleResult(await Mediator.Send(new Delete.Command { Id = id }));
+        }
+
+        /// <summary>
+        /// Attends the specified identifier.
+        /// </summary>
+        /// <param name="Id">The identifier.</param>
+        /// <returns></returns>
+        [HttpPost("{id}/attend")]
+        public async Task<IActionResult> Attend(Guid id)
+        {
+            return HandleResult(await Mediator.Send(new UpdateAttendance.Command { Id = id }));
         }
     }
 }

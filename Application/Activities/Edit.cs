@@ -23,13 +23,13 @@ namespace Application.Activities
             /// <value>
             /// The activity model.
             /// </value>
-            public ActivityModel ActivityModel { get; set; }
+            public Activity ActivityModel { get; set; }
         }
 
         /// <summary>
         /// Command Validator
         /// </summary>
-        /// <seealso cref="FluentValidation.AbstractValidator{Domain.Model.ActivityModel}" />
+        /// <seealso cref="FluentValidation.AbstractValidator{Domain.Model.Activity}" />
         public class CommandValidator : AbstractValidator<Command>
         {
             public CommandValidator()

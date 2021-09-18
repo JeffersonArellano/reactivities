@@ -1,6 +1,9 @@
 ﻿using Application.Core;
+using AutoMapper;
+using AutoMapper.QueryableExtensions;
 using Domain.Model;
 using MediatR;
+using Microsoft.EntityFrameworkCore;
 using Persistence;
 using System;
 using System.Threading;
@@ -10,28 +13,28 @@ namespace Application.Activities
 {
     public class Details
     {
-        public class Query : IRequest<Result<ActivityModel>>
+        public class Query : IRequest<Result<ActivityDto>>
         {
             /// <summary>
-            /// Gets or sets the identifier.
-            /// </summary>
-            /// <value>
             /// The identifier.
-            /// </value>
+            /// </summary>
             public Guid Id { get; set; }
         }
 
-        public class Handler : IRequestHandler<Query, Result<ActivityModel>>
+        public class Handler : IRequestHandler<Query, Result<ActivityDto>>
         {
             private readonly DataContext _context;
+            private readonly IMapper _mapper;
 
             /// <summary>
             /// Initializes a new instance of the <see cref="Handler"/> class.
             /// </summary>
             /// <param name="context">The context.</param>
-            public Handler(DataContext context)
+            /// <param name="mapper">The mapper.</param>
+            public Handler(DataContext context, IMapper mapper)
             {
                 _context = context;
+                _mapper = mapper;
             }
 
             /// <summary>
@@ -42,11 +45,13 @@ namespace Application.Activities
             /// <returns>
             /// Response from the request
             /// </returns>
-            public async Task<Result<ActivityModel>> Handle(Query request, CancellationToken cancellationToken)
+            public async Task<Result<ActivityDto>> Handle(Query request, CancellationToken cancellationToken)
             {
-                var activity = await _context.Activities.FindAsync(request.Id);
+                var activity = await _context.Activities
+                    .ProjectTo<ActivityDto>(_mapper.ConfigurationProvider)
+                    .FirstOrDefaultAsync(x => x.Id == request.Id);
 
-                return Result<ActivityModel>.Success(activity);
+                return Result<ActivityDto>.Success(activity);
             }
         }
 

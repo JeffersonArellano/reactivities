@@ -70,10 +70,16 @@ namespace API.Controllers
         public async Task<ActionResult<UserDto>> Register(RegisterDto registerDto)
         {
             if (await _userManager.Users.AnyAsync(x => x.Email.Equals(registerDto.Email)))
-                return BadRequest("Email Taken");
+            {
+                ModelState.AddModelError("email", "Email Taken");
+                return ValidationProblem();
+            }
 
             if (await _userManager.Users.AnyAsync(x => x.UserName.Equals(registerDto.UserName)))
-                return BadRequest("User name taken");
+            {
+                ModelState.AddModelError("userName", "Username Taken");
+                return ValidationProblem();
+            }
 
             var user = new AppUser
             {
