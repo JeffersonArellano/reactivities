@@ -15,7 +15,15 @@ namespace Domain.Model
         /// </summary>
         public string Bio { get; set; }
 
+        /// <summary>
+        /// Gets or sets the activities.
+        /// </summary>
         public virtual ICollection<ActivityAttendee> Activities { get; set; }
+
+        /// <summary>
+        /// Gets or sets the photos.
+        /// </summary>
+        public virtual ICollection<Photo> Photos { get; set; }
 
     }
 }

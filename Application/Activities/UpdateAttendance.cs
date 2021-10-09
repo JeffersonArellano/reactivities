@@ -6,9 +6,7 @@ using MediatR;
 using Microsoft.EntityFrameworkCore;
 using Persistence;
 using System;
-using System.Collections.Generic;
 using System.Linq;
-using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
 
@@ -48,7 +46,7 @@ namespace Application.Activities
 
                 if (activity == null) return null;
 
-                var user = await _context.Users.FirstOrDefaultAsync(x => x.Id.Equals( _userAccessor.GetUserName()));
+                var user = await _context.Users.FirstOrDefaultAsync(x => x.Id.Equals(_userAccessor.GetUserName()));
 
                 if (user == null) return null;
 
@@ -75,7 +73,7 @@ namespace Application.Activities
 
                 var result = await _context.SaveChangesAsync() > 0;
 
-                return result ? Result<Unit>.Success(Unit.Value) : Result<Unit>.Failure("Problem updating Attendance");              
+                return result ? Result<Unit>.Success(Unit.Value) : Result<Unit>.Failure("Problem updating Attendance");
             }
         }
     }
