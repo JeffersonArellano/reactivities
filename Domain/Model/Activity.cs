@@ -18,5 +18,6 @@ namespace Domain.Model
         public bool IsCancelled { get; set; }
 
         public virtual ICollection<ActivityAttendee> Attendees { get; set; } = new List<ActivityAttendee>();
+        public virtual ICollection<Comment> Comments { get; set; } = new List<Comment>();
     }
 }
