@@ -25,5 +25,15 @@ namespace Domain.Model
         /// </summary>
         public virtual ICollection<Photo> Photos { get; set; }
 
+        /// <summary>
+        /// Gets or sets the followers.
+        /// </summary>
+        public virtual ICollection<UserFollowing> Followers { get; set; }
+
+        /// <summary>
+        /// Gets or sets the following.
+        /// </summary>
+        public virtual ICollection<UserFollowing> Followings { get; set; }
+
     }
 }
