@@ -52,16 +52,22 @@ namespace API
             //app.UseHttpsRedirection();
 
             app.UseRouting();
+            
+            //files from wwwroot
+            app.UseDefaultFiles();
+            app.UseStaticFiles();
+
 
             app.UseCors("CorsPolicy");
 
             app.UseAuthentication();
-            app.UseAuthorization();
+            app.UseAuthorization();           
 
             app.UseEndpoints(endpoints =>
             {
                 endpoints.MapControllers();
                 endpoints.MapHub<ChatHub>("/chat");
+                endpoints.MapFallbackToController("Index", "Fallback");
             });
         }
     }
