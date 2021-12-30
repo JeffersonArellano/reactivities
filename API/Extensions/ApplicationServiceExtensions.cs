@@ -73,7 +73,8 @@ namespace API.Extensions
                     .AllowAnyOrigin()
                     .AllowAnyHeader()
                     .AllowCredentials()
-                    .WithOrigins("http://localhost:3000");
+                    .WithOrigins("http://localhost:3000")
+                    .WithOrigins("https://localhost:3000");
                 });
             });
 
