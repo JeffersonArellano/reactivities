@@ -1,17 +1,20 @@
 ﻿using System;
-using System.ComponentModel.DataAnnotations;
+using System.Collections.Generic;
 
-namespace Domain.Model
+namespace Application.Activities
 {
-    public class ActivityModel
+    public class ActivityDto
     {
-        [Key]
-        public string Id { get; set; }
+        public Guid Id { get; set; }
         public string Title { get; set; }
         public DateTime Date { get; set; }
         public string Description { get; set; }
         public string Category { get; set; }
         public string City { get; set; }
         public string Venue { get; set; }
+        public string HostUsername { get; set; }
+        public bool IsCancelled { get; set; }
+
+        public ICollection<AttendeeDto> Attendees { get; set; }
     }
 }
